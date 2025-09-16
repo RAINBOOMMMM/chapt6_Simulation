@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- 两轮差速控制插件：可在其它 xacro 中通过 <xacro:gazebo_diff_drive .../> 引用 -->
+  <xacro:macro name="gazebo_control_plugin"
+               params="
+                 left_joint:=left_wheel_joint
+                 right_joint:=right_wheel_joint
+                 wheel_separation:=0.2
+                 wheel_diameter:=0.064
+                 update_rate:=30
+               ">
+
+    <gazebo>
+      <plugin name="gazebo_ros_diff_drive" filename="libgazebo_ros_diff_drive.so"> <!--libgazebo_ros_diff_drive是一个动态运行库-->
+        <!-- ROS 插件命名空间与话题重映射 -->
+        <ros>
+          <namespace>/</namespace>
+          <!--重映射，在这里什么都没改，但是需要改的时候就很方便-->
+          <remapping>cmd_vel:=cmd_vel</remapping>
+          <remapping>odom:=odom</remapping>
+        </ros>
+
+        <!-- 频率 -->
+        <updateRate>${update_rate}</updateRate>
+
+        <!-- wheels -->
+        <left_joint>${left_joint}</left_joint>
+        <right_joint>${right_joint}</right_joint>
+
+        <!-- kinematics几何参数 -->
+        <wheel_separation>${wheel_separation}</wheel_separation>
+        <wheel_diameter>${wheel_diameter}</wheel_diameter>
+
+        <!-- 扭矩/加速度 -->
+        <max_wheel_torque>20</max_wheel_torque>
+        <max_wheel_acceleration>1.0</max_wheel_acceleration>
+
+        <!-- 里程计与 TF 发布 -->
+        <publish_odom>true</publish_odom>
+        <publish_odom_tf>true</publish_odom_tf>
+        <publish_wheel_tf>true</publish_wheel_tf>
+
+        <!-- 父子坐标系 -->
+        <odometry_frame>odom</odometry_frame>
+        <robot_base_frame>base_footprint</robot_base_frame>
+      </plugin>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>
